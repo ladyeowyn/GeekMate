@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Vizualizacija napretka</h2>
+
+  <form method="post" class="mb-4">
+    <select name="hobi_id" class="form-select w-auto d-inline-block">
+      <option value="">Svi hobiji</option>
+      {% for h in hobiji %}
+        <option value="{{ h.id }}" {% if selected==h.id %}selected{% endif %}>
+          {{ h.ime }}
+        </option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary">Prikaži</button>
+  </form>
+
+  <canvas id="progressChart" width="600" height="300"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartLabels = {{ labels|tojson }};
+  const chartData   = {{ values|tojson }};
+
+  const ctx = document.getElementById('progressChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels,
+      datasets: [{
+        label: '% Napretka',
+        data: chartData,
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor:   'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, max: 100 } }
+    }
+  });
+</script>
+{% endblock %}
